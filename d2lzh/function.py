@@ -3,7 +3,7 @@ import torch
 import matplotlib.pyplot as plt
 import torchvision
 import torchvision.transforms as transforms
-
+from torch import nn
 
 def data_iter(batch_size, features, labels):
     num_examples = len(features)
@@ -30,12 +30,12 @@ def sgd(params, lr, batch_size):
 
 def get_fashion_mnist_labels(labels):
     text_labels = ['t-shirt', 'trouser', 'pullover', 'dress',
-                   'coat', 'sandal', 'shirt', 'sneaker', 'bag', 'ankleboot']
+                   'coat', 'sandal', 'shirt', 'sneaker', 'bag', 'ankle boot']
     return [text_labels[int(i)] for i in labels]
 
 
 def show_fashion_mnist(images, labels):
-    _, figs = plt.subplots(1, len(images), figsize=(12, 12))
+    _, figs = plt.subplots(1, len(images), figsize=(24, 24))
     for f, img, lbl in zip(figs, images, labels):
         f.imshow(img.view((28, 28)).numpy())
         f.set_title(lbl)
@@ -46,9 +46,9 @@ def show_fashion_mnist(images, labels):
 
 def load_data_fashion_mnist(batch_size):
     num_workers = 4
-    mnist_train = torchvision.datasets.FashionMNIST(root='~/Datasets/FashionMNIST',
+    mnist_train = torchvision.datasets.FashionMNIST(root='~/GitHub/DLBeginer/Datasets/FashionMNIST',
                                                     train=True, download=True, transform=transforms.ToTensor())
-    mnist_test = torchvision.datasets.FashionMNIST(root='~/Datasets/FashionMNIST',
+    mnist_test = torchvision.datasets.FashionMNIST(root='~/GitHub/DLBeginer/Datasets/FashionMNIST',
                                                    train=False, download=True, transform=transforms.ToTensor())
 
     train_iter = torch.utils.data.DataLoader(mnist_train, batch_size=batch_size, shuffle=True, num_workers=num_workers)
@@ -96,6 +96,14 @@ def train_ch3(net, train_iter, test_iter, loss, num_epochs, batch_size, params=N
         print('epoch %d, loss %.4f, train acc %.3f, test acc %.3f'
                   % (epoch + 1, train_l_sum / n, train_acc_sum / n,
                      test_acc))
+
+
+class FlattenLayer(nn.Module):
+    def __init__(self):
+        super(FlattenLayer, self).__init__()
+
+    def forward(self, x):
+        return x.view(x.shape[0], -1)
 
 
 def test():
